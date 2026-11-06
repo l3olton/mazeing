@@ -111,20 +111,14 @@ int main(void)
       float nextX = player.x + player.vx * dt;
       float nextY = player.y + player.vy * dt;
 
+      // move in y-axis
       player.y = nextY;
-      player.x = nextX;
-	    
+
+      // calc overlapping tiles
       size_t tileIndexBelow = GetGridIndex(player.y) + 1;
       size_t tileIndexAbove = GetGridIndex(player.y);
       size_t tileIndexRight = GetGridIndex(player.x) + 1;
-      size_t tileIndexLeft = GetGridIndex(player.x);
-
-      /* if (grid[GetGridIndex(nextY)][GetGridIndex(player.x)]) { */
-      /* 	player.y =  */
-      /* 	player.vy = 0; */
-      /* } */
-
-      //      player.x = nextX;
+      size_t tileIndexLeft = GetGridIndex(player.x);      
 
       if (grid[tileIndexBelow][GetGridIndex(player.x)]) {
 	player.y = GetWindowPos(tileIndexBelow) - TILE_SIZE;
@@ -135,6 +129,15 @@ int main(void)
 	player.y = GetWindowPos(tileIndexAbove) + TILE_SIZE;
 	player.vy = 0;
       }
+
+      // move in x-axis
+      player.x = nextX;
+
+      // re-calc overlapping tiles
+      tileIndexBelow = GetGridIndex(player.y) + 1;
+      tileIndexAbove = GetGridIndex(player.y);
+      tileIndexRight = GetGridIndex(player.x) + 1;
+      tileIndexLeft = GetGridIndex(player.x);            
 
       if (grid[GetGridIndex(player.y)][tileIndexRight]) {
 	player.x = GetWindowPos(tileIndexRight) - TILE_SIZE;
