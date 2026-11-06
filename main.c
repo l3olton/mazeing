@@ -34,14 +34,14 @@ size_t GetGridIndex(float windowY)
 
 int main(void)
 {
-  InitWindow(WIDTH, HEIGHT, "Mazeing 1");
+  InitWindow(WIDTH, HEIGHT, "Mazeing");
   SetTargetFPS(60);
 
   Player player = {0};
   Position initialPlayerPosition = {0};
 
   int byteCount = 0;
-  unsigned char *fData = LoadFileData("1.maze", &byteCount);
+  unsigned char *fData = LoadFileData("levels/1.txt", &byteCount);
 
   if (fData == NULL) {
     printf("unable to load file data\n");
