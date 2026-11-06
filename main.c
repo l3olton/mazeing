@@ -18,7 +18,7 @@ typedef struct {
   float vx, vy;
 } Player;
 
-const float speed = 250.0;
+const float speed = 500.0;
 
 typedef uint8_t Grid[MAX_CHAR_WIDTH][MAX_CHAR_WIDTH];
 
