@@ -120,12 +120,12 @@ int main(void)
       size_t tileIndexRight = GetGridIndex(player.x) + 1;
       size_t tileIndexLeft = GetGridIndex(player.x);      
 
-      if (grid[tileIndexBelow][GetGridIndex(player.x)]) {
+      if (grid[tileIndexBelow][GetGridIndex(player.x)] == 1) { // TODO: func for this condition
 	player.y = GetWindowPos(tileIndexBelow) - TILE_SIZE;
 	player.vy = 0;
       }
 
-      if (grid[tileIndexAbove][GetGridIndex(player.x)]) {
+      if (grid[tileIndexAbove][GetGridIndex(player.x)] == 1) {
 	player.y = GetWindowPos(tileIndexAbove) + TILE_SIZE;
 	player.vy = 0;
       }
@@ -139,12 +139,12 @@ int main(void)
       tileIndexRight = GetGridIndex(player.x) + 1;
       tileIndexLeft = GetGridIndex(player.x);            
 
-      if (grid[GetGridIndex(player.y)][tileIndexRight]) {
+      if (grid[GetGridIndex(player.y)][tileIndexRight] == 1) {
 	player.x = GetWindowPos(tileIndexRight) - TILE_SIZE;
 	player.vx = 0;
       }
 
-      if (grid[GetGridIndex(player.y)][tileIndexLeft]) {
+      if (grid[GetGridIndex(player.y)][tileIndexLeft] == 1) {
 	player.x = GetWindowPos(tileIndexLeft) + TILE_SIZE;
 	player.vx = 0;
       }
