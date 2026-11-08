@@ -6,7 +6,7 @@
 #define WIDTH 800
 #define HEIGHT 800
 #define TILE_SIZE 12
-#define MAX_CHAR_WIDTH 64
+#define GRID_SIZE 64
 
 typedef struct {
   float x;
@@ -20,7 +20,7 @@ typedef struct {
 
 const float speed = 500.0;
 
-typedef uint8_t Grid[MAX_CHAR_WIDTH][MAX_CHAR_WIDTH];
+typedef uint8_t Grid[GRID_SIZE][GRID_SIZE];
 
 float GetWindowPos(size_t gridY)
 {
@@ -57,8 +57,8 @@ int main(void)
   for (size_t i = 0; i < byteCount; ++i) {
     size_t x, y;
 
-    size_t col = i % (MAX_CHAR_WIDTH + 1);
-    if (col > MAX_CHAR_WIDTH) continue;
+    size_t col = i % (GRID_SIZE + 1);
+    if (col > GRID_SIZE) continue;
 	
     switch (fData[i]) {
     case '\n':
@@ -72,7 +72,7 @@ int main(void)
       grid[lineCount][col] = 2;
       break;
     case 'p':
-      x = (i % (MAX_CHAR_WIDTH + 1)) * TILE_SIZE;
+      x = (i % (GRID_SIZE + 1)) * TILE_SIZE;
       y = lineCount * TILE_SIZE;
       player.x = x;
       player.y = y;
