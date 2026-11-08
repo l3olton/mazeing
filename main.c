@@ -9,11 +9,7 @@
 #define GRID_SIZE 64
 
 typedef struct {
-  float x;
-  float y;
-} Position;
-
-typedef struct {
+  float initialX, initialY;
   float x, y;
   float vx, vy;
 } Player;
@@ -38,7 +34,6 @@ int main(void)
   SetTargetFPS(60);
 
   Player player = {0};
-  Position initialPlayerPosition = {0};
 
   int byteCount = 0;
   unsigned char *fData = LoadFileData("levels/1.txt", &byteCount);
@@ -76,8 +71,8 @@ int main(void)
       y = lineCount * TILE_SIZE;
       player.x = x;
       player.y = y;
-      initialPlayerPosition.x = x;
-      initialPlayerPosition.y = y;
+      player.initialX = x;
+      player.initialY = y;
       grid[lineCount][col] = 0;
       break;
     case '.':
@@ -150,8 +145,8 @@ int main(void)
       }
 
       if (IsKeyPressed(KEY_R)) {
-	player.x = initialPlayerPosition.x;
-	player.y = initialPlayerPosition.y;
+	player.x = player.initialX;
+	player.y = player.initialY;
       }
 
       BeginDrawing();
