@@ -95,16 +95,16 @@ int main(void)
       player.vy = 0;
       player.vx = 0;
 
-      if (IsKeyDown(KEY_W)) {
+      if (IsKeyDown(KEY_W) || IsKeyDown(KEY_UP)) {
 	player.vy = -speed;
       }
-      if (IsKeyDown(KEY_A)) {
+      if (IsKeyDown(KEY_A) || IsKeyDown(KEY_LEFT)) {
 	player.vx = -speed;
       }
-      if (IsKeyDown(KEY_S)) {
+      if (IsKeyDown(KEY_S) || IsKeyDown(KEY_DOWN)) {
 	player.vy = speed;
       }
-      if (IsKeyDown(KEY_D)) {
+      if (IsKeyDown(KEY_D) || IsKeyDown(KEY_RIGHT)) {
 	player.vx = speed;
       }
 
