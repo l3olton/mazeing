@@ -187,17 +187,11 @@ int main(void)
 	if (grid[tileIndexBelow][GetGridIndex(player.x)] == 1) { // TODO: func for this condition
 	  player.y = GetWindowPos(tileIndexBelow) - TILE_SIZE;
 	  player.vy = 0;
-	} else if (grid[tileIndexBelow][GetGridIndex(player.x)] == 2) {
-	  level++;
-	  gameState = LOADING_LEVEL;
 	}
 
 	if (grid[tileIndexAbove][GetGridIndex(player.x)] == 1) {
 	  player.y = GetWindowPos(tileIndexAbove) + TILE_SIZE;
 	  player.vy = 0;
-	} else if (grid[tileIndexAbove][GetGridIndex(player.x)] == 2) {
-	  level++;
-	  gameState = LOADING_LEVEL;
 	}
 
 	// move in x-axis
@@ -212,18 +206,20 @@ int main(void)
 	if (grid[GetGridIndex(player.y)][tileIndexRight] == 1) {
 	  player.x = GetWindowPos(tileIndexRight) - TILE_SIZE;
 	  player.vx = 0;
-	} else if (grid[GetGridIndex(player.y)][tileIndexRight] == 2) {
-	  level++;
-	  gameState = LOADING_LEVEL;
 	}
 
 	if (grid[GetGridIndex(player.y)][tileIndexLeft] == 1) {
 	  player.x = GetWindowPos(tileIndexLeft) + TILE_SIZE;
 	  player.vx = 0;
-	} else if (grid[GetGridIndex(player.y)][tileIndexLeft] == 2) {
+	}
+
+	if (grid[tileIndexAbove][GetGridIndex(player.x)] == 2 ||
+	    grid[tileIndexBelow][GetGridIndex(player.x)] == 2 ||
+	    grid[GetGridIndex(player.y)][tileIndexRight] == 2 ||
+	    grid[GetGridIndex(player.y)][tileIndexLeft] == 2) {
 	  level++;
 	  gameState = LOADING_LEVEL;
-	}
+	}	
 
 	if (IsKeyPressed(KEY_R)) {
 	  gameState = LOADING_LEVEL;
