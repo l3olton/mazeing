@@ -24,14 +24,14 @@ const float speed = 500.0;
 
 typedef uint8_t Grid[GRID_SIZE][GRID_SIZE];
 
-float GetWindowPos(size_t gridY)
+float GetWindowPos(size_t gridIndex)
 {
-  return gridY * TILE_SIZE;
+  return gridIndex * TILE_SIZE;
 }
 
-size_t GetGridIndex(float windowY)
+size_t GetGridIndex(float windowPosition)
 {
-  return (size_t)(windowY / TILE_SIZE);
+  return (size_t)(windowPosition / TILE_SIZE);
 }
 
 int main(void)
