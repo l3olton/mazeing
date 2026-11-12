@@ -3,26 +3,11 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#define WIDTH 800
-#define HEIGHT 800
-#define TILE_SIZE 12
-#define GRID_SIZE 64
-
-typedef enum {
-  START_MENU,
-  LOADING_LEVEL,
-  PLAYING,
-  COMPLETED
-} GameState;
-
-typedef struct {
-  float x, y;
-  float vx, vy;
-} Player;
+#include "load_level.c"
+#include "start_menu.c"
+#include "game_state.h"
 
 const float speed = 500.0;
-
-typedef uint8_t Grid[GRID_SIZE][GRID_SIZE];
 
 float GetWindowPos(size_t gridIndex)
 {
@@ -34,6 +19,20 @@ size_t GetGridIndex(float windowPosition)
   return (size_t)(windowPosition / TILE_SIZE);
 }
 
+uint8_t IsSolidTile(const Grid grid, const size_t x, const size_t y)
+{
+  return grid[y][x] == 1
+    || grid[y][x] == 'a';
+}
+
+uint8_t IsColliding()
+{
+   GetGridIndex(player.y) + 1;
+  size_t tileIndexAbove = GetGridIndex(player.y);
+  size_t tileIndexRight = GetGridIndex(player.x) + 1;
+  size_t tileIndexLeft = GetGridIndex(player.x);       
+}
+
 int main(void)
 {
   InitWindow(WIDTH, HEIGHT, "Mazeing");
@@ -43,112 +42,19 @@ int main(void)
   size_t level = 1;
   Player player = {0};
   Grid grid;
-  size_t currentMenuItem = 0;  
-
-  const size_t maxFileNameLength = 16;
-  char fileName[maxFileNameLength];  
 
   while (!WindowShouldClose())
     {
       switch (gameState) {
       case START_MENU:
-	BeginDrawing();
-	ClearBackground(BLACK);
-
-	char *menu[] = {
-	  "Start new game",
-	  "Load saved game",
-	  "Level editor",
-	  "Settings"
-	};
-
-	size_t menuLength = sizeof(menu) / sizeof(menu[0]);
-
-	// TODO: center menu items properley
-	for (size_t i = 0; i < menuLength; ++i) {
-	  DrawText(menu[i], (WIDTH / 2) - 100, (i + 1) * 100, 25, currentMenuItem == (i + 1) ? BLUE : PURPLE);	  
-	}
-
-	if (IsKeyPressed(KEY_ENTER)) {
-	  switch (currentMenuItem) {
-	  case 1:
-	    gameState = LOADING_LEVEL;
-	    break;
-	  default:
-	    printf("Not implemented\n");
-	    break;
-	  }
-	}
-
-	if (IsKeyPressed(KEY_DOWN)) {
-	  currentMenuItem = ++currentMenuItem % (menuLength + 1);
-	}
-
-	// TODO: cycling from top to bottom item doesnt work
-	if (IsKeyPressed(KEY_UP)) {
-	  currentMenuItem = --currentMenuItem % (menuLength + 1);
-	}	
-	
-	EndDrawing();
+	StartMenu(&gameState);
 	break;
       case LOADING_LEVEL:
-
-
-	// read file
-  
-	int bytesWritten = snprintf(fileName, maxFileNameLength, "levels/%ld.txt", level);
-	if (bytesWritten >= maxFileNameLength || bytesWritten < 0) {
-	  // TODO: error handling
-	  printf("Error formatting level file name\n");
-	  return 1;
-	}
-	int byteCount = 0;
-	unsigned char *fileData = LoadFileData(fileName, &byteCount);
-
-	if (fileData == NULL) {
-	  // TODO: error handling
-	  printf("unable to load file data\n");
-	  return 1;
-	}
-
-	printf("File loaded. %d bytes\n", byteCount);
-
-	// done reading file	
-
-	// Parse level file
-
-	size_t lineCount = 0;
-	for (size_t i = 0; i < byteCount; ++i) {
-	  size_t x, y;
-
-	  size_t col = i % (GRID_SIZE + 1);
-	  if (col > GRID_SIZE) continue;
+	int levelLoaded = LoadLevel(level, grid, &player);
 	
-	  switch (fileData[i]) {
-	  case '\n':
-	    lineCount++;
-	    break;
-	  case 'w':
-	    grid[lineCount][col] = 1;
-	    break;
-	  case 'e':
-	    grid[lineCount][col] = 2;
-	    break;
-	  case 'p':
-	    x = (i % (GRID_SIZE + 1)) * TILE_SIZE;
-	    y = lineCount * TILE_SIZE;
-	    player.x = x;
-	    player.y = y;
-	    grid[lineCount][col] = 0;
-	    break;
-	  case '.':
-	  default:
-	    grid[lineCount][col] = 0;
-	    break;
-	  }
+	if (!levelLoaded) {
+	  printf("Failed to load level\n");
 	}
-
-	// parseing done
 
 	gameState = PLAYING;
 
@@ -184,12 +90,12 @@ int main(void)
 	size_t tileIndexRight = GetGridIndex(player.x) + 1;
 	size_t tileIndexLeft = GetGridIndex(player.x);      
 
-	if (grid[tileIndexBelow][GetGridIndex(player.x)] == 1) { // TODO: func for this condition
+	if (IsSolidTile(grid, GetGridIndex(player.x), tileIndexBelow)) {
 	  player.y = GetWindowPos(tileIndexBelow) - TILE_SIZE;
 	  player.vy = 0;
 	}
 
-	if (grid[tileIndexAbove][GetGridIndex(player.x)] == 1) {
+	if (IsSolidTile(grid, GetGridIndex(player.x), tileIndexAbove)) {
 	  player.y = GetWindowPos(tileIndexAbove) + TILE_SIZE;
 	  player.vy = 0;
 	}
@@ -203,12 +109,12 @@ int main(void)
 	tileIndexRight = GetGridIndex(player.x) + 1;
 	tileIndexLeft = GetGridIndex(player.x);            
 
-	if (grid[GetGridIndex(player.y)][tileIndexRight] == 1) {
+	if (IsSolidTile(grid, tileIndexRight, GetGridIndex(player.y))) {
 	  player.x = GetWindowPos(tileIndexRight) - TILE_SIZE;
 	  player.vx = 0;
 	}
 
-	if (grid[GetGridIndex(player.y)][tileIndexLeft] == 1) {
+	if (IsSolidTile(grid, tileIndexLeft, GetGridIndex(player.y))) {
 	  player.x = GetWindowPos(tileIndexLeft) + TILE_SIZE;
 	  player.vx = 0;
 	}
@@ -219,6 +125,13 @@ int main(void)
 	    grid[GetGridIndex(player.y)][tileIndexLeft] == 2) {
 	  level++;
 	  gameState = LOADING_LEVEL;
+	}
+
+	if (grid[tileIndexAbove][GetGridIndex(player.x)] == 'A' ||
+	    grid[tileIndexBelow][GetGridIndex(player.x)] == 'A' ||
+	    grid[GetGridIndex(player.y)][tileIndexRight] == 'A' ||
+	    grid[GetGridIndex(player.y)][tileIndexLeft] == 'A') {
+	  // make door slide open then slide closed
 	}	
 
 	if (IsKeyPressed(KEY_R)) {
@@ -236,6 +149,12 @@ int main(void)
 	      break;
 	    case 2:
 	      DrawRectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, YELLOW);
+	      break;
+	    case 'a':
+	      DrawRectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
+	      break;
+	    case 'A':
+	      DrawRectangle(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE, RED);
 	      break;
 	    }
 	  }
